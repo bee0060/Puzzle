@@ -1,0 +1,44 @@
+*{
+	margin:0px;
+	padding:0px;
+	clear:both;	
+}
+
+
+body {
+	border:1px solid #000000;
+	height:560px;
+	margin:20px auto;
+	width:1300px;	
+}
+
+header{
+	margin-bottom:15px;
+	
+}
+
+footer{
+	bottom:0px;
+	display:block;
+	height:30px; 
+	margin:0px auto;
+	position:absolute;
+	text-align:center;
+	width:95%;
+}
+
+.content
+{
+    border: 2px solid #000;
+	display:block;
+	float: left;
+	margin:20px;
+	position:relative;
+	width:1300px;
+}
+.content div,.content div div{  display:block; float: left; width:200px; height:100px;}
+
+.img-info{ border: 2px solid #000;}
+.img-info ul{ list-style:none;}
+
+.frag-area{ border: 2px solid #000; width:200px; height: 500px; }

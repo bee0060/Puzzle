@@ -16,9 +16,10 @@ puzzle.ctrls ={
 };
 
 puzzle.variables = {
-    imgSrc:"";
+    imgSrc: ""
 };
 
+puzzle.modules = ["7*7","8*6","6*8"];
 
 function selectImg()
 {
@@ -33,6 +34,25 @@ function selectImg()
 
     ctrls.imgOrigin.attr('src', getImgUrl());
     ctrls.imgOrigin.attr('alt', '');
+}
+
+function calValidCutModule(width, height)
+{
+	
+    return {x:10,y:10};	
+}
+
+function loadValidCutModule(moduleArr)
+{
+	var ulModuleList = $('#ulModuleList');
+	if(isArray(moduleArr)&&moduleArr.length>0)
+	{
+		for(var i =0;i<moduleArr.length;i++)
+		{
+			
+		}	
+	}
+	
 }
 
 function loadOriginImg(imgObj)
@@ -65,4 +85,41 @@ function getImgUrl()
         imgUrl = flImgSelector.value;
     }
     return imgUrl;
+}
+
+function showDifficultLevel()
+{
+	var modes = CUT_MODES,
+		ulModeList = $('#ulModeList'),
+		frag = document.createDocumentFragment(),
+		li,
+		rad,
+		lab;
+		 
+	for(var i =0;i<modes.length;i++)
+	{
+		li = document.createElement('li');
+		rad = document.createElement('input');
+		rad.type = 'radio';
+		rad.name = 'mode';
+		rad.VSplitCount = modes[i].VSplitCount;
+		rad.HSplitCount = modes[i].HSplitCount;
+		
+		lab = document.createElement('label');
+		lab.innerHTML = modes[i].Name;
+		
+			
+		li.appendChild(rad);
+		li.appendChild(lab);	
+		
+		frag.appendChild(li);
+	}
+	
+	ulModeList.append(frag);
+}
+
+
+function isArray(obj)
+{
+	return Object.prototype.toString.call(obj).toLocaleLowerCase().indexOf("array")>-1;	
 }

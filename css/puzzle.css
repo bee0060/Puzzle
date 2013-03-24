@@ -13,7 +13,7 @@ body {
 }
 
 header{
-	margin-bottom:15px;
+	margin-bottom:10px;
 	
 }
 
@@ -32,13 +32,15 @@ footer{
     border: 2px solid #000;
 	display:block;
 	float: left;
-	margin:20px;
+	height:450px;
+	margin:10px;
 	position:relative;
-	width:1300px;
+	width:1200px;
 }
-.content div,.content div div{  display:block; float: left; width:200px; height:100px;}
+.content div{display:block; width:300px; height:100px;}
 
-.img-info{ border: 2px solid #000;}
-.img-info ul{ list-style:none;}
+.img-info{ border: 2px solid #000; width:100%;}
+.img-info ul{ list-style:none; float:left; width:100px;}
+.mode-list{display:block; width:100px; 50px; }
 
 .frag-area{ border: 2px solid #000; width:200px; height: 500px; }

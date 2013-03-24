@@ -5,20 +5,15 @@
 	<projects>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>com.aptana.ide.core.unifiedBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>com.aptana.projects.webnature</nature>
 	</natures>
 	<linkedResources>
 		<link>
-			<name>js/jquery-1.7.2.min.js</name>
+			<name>js/jquery-1.9.0.min.js</name>
 			<type>1</type>
-			<location>E:/WHQProjects/JS Study/jquery-1.7.2.min.js</location>
+			<location>E:/WHQProjects/Puzzle/js/jquery-1.9.0.min.js</location>
 		</link>
 	</linkedResources>
 </projectDescription>

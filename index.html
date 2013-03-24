@@ -21,13 +21,14 @@
 			</header>
 			<div class='content'>
 				<!-- 选图区 -->
-				<div>
+				<div class='select-img-area float left'>
 					<label>Image Path: </label>
 					<input id='flImgSelector' type='file' />
 					<input id='btnSelectImg' type='button' value="选择图片" />
+					<input id='btnCut' type='button' value="切割图片" />
 				</div>
 				<!-- 预览区，包括图片初始信息显示 -->
-				<div class='img-info'>
+				<div class='img-info float left'>
 					<img id='imgOrigin' alt=''>
 					<ul>
 						<li>图片路径:<span id='spnImgUrl'></span></li>
@@ -39,7 +40,7 @@
 					    
 					</ul>
 				</div>
-				<div>
+				<div class='float'>
 					<!-- 碎片区 -->
 					<div class='frag-area'></div>
 					<div></div>
@@ -54,6 +55,7 @@
 		
 		
          <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+         <script type="text/javascript" src="js/common.js"></script>
          <script type="text/javascript" src="js/puzzle.js"></script>
          <script type="text/javascript" src="js/config.js"></script>
          <script type="text/javascript">
@@ -66,6 +68,11 @@
          		btnSelectImg.on('click',function(){
          			selectImg();     
          			showDifficultLevel();    			
+         		});
+         		
+         		var btnCut = $('#btnCut');
+         		btnCut.on('click',function(){
+         		    cutImg();         		    
          		});
          	});
          	

@@ -2,7 +2,6 @@
  * @author Stevn Weng
  * Created on 2012-12-14
  */
-
 var puzzle = {};
 
 puzzle.ctrls ={
@@ -107,7 +106,6 @@ function showDifficultLevel()
 		
 		lab = document.createElement('label');
 		lab.innerHTML = modes[i].Name;
-		
 			
 		li.appendChild(rad);
 		li.appendChild(lab);	
@@ -118,8 +116,8 @@ function showDifficultLevel()
 	ulModeList.append(frag);
 }
 
-
-function isArray(obj)
-{
-	return Object.prototype.toString.call(obj).toLocaleLowerCase().indexOf("array")>-1;	
+function cutImg(){
+	var radSelectedMode = $('#ulModeList li input[type=radio][name=mode]:checked');
+	alert(radSelectedMode.length);
 }
+

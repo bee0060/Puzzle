@@ -119,15 +119,15 @@ function showDifficultLevel()
 function cutImg(){
 	//var radSelectedMode = $('#ulModeList li input[type=radio][name=mode]:checked');
 	//alert(radSelectedMode.length);
-	
-	var imgWidth = imgOrigin.width,
+	var	imgOrigin = puzzle.ctrls.imgOrigin[0],
+		imgWidth = imgOrigin.width,
 		imgHeight = imgOrigin.height,
 		hozCount = 4, verCount = 4, 
 		cellWidth = parseInt(imgWidth/hozCount),
 		lastCellWidth = imgWidth- cellWidth*hozCount;
 		cellHeight = parseInt(imgHeight/verCount),
 		lastCellHeight = imgHeight-cellHeight*verCount;
-	
+	 
 	hozCount += (lastCellWidth > 0 ? 1 : 0);
 	verCount += (lastCellHeight > 0 ? 1 : 0);
 	
@@ -164,19 +164,19 @@ function cutImg(){
 				'height':currentCellHeight+"px",
 				'overflow':'hidden',
 				'width':currentCellWidth+"px"});
-			
 			cells.push(li);
 		}		
 	}
 	
 	mixedCells = mixUpCells(cells);
-	alert(mixedCells.length);
+ 
 	fillUl(ul, mixedCells);
-alert(mixedCells.length);
+
 	playField.appendChild(ul);
 	$('.content').append(playField);
 }
 
+/* 洗牌算法 */
 function mixUpCells(cells)
 {
 	var cellCount = cells.length,
@@ -185,10 +185,13 @@ function mixUpCells(cells)
 		pointInt,
 		pointCell,
 		outputCells =[];
-		 
+alert(cells[0].style.cssText);
 	while(seed>0){
 		pointInt = Math.round(Math.random()*seed-0.5);
 		pointCell = cells.splice(pointInt,1);
+		// TODO:2013-08-11 这里产生了bug，洗牌后插入outputCells数组的pointCell不是完整的所需的LI对象。
+			
+
 		outputCells.push(pointCell);
 		
 		seed--;
@@ -198,6 +201,8 @@ function mixUpCells(cells)
 
 function fillUl(ul, liArray)
 {
+	alert("!");
+	alert(liArray.nodeName);
 	for( var i =0;i<liArray.length;i++)
 	{
 		ul.appendChild(liArray[i]);

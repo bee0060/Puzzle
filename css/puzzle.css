@@ -44,3 +44,7 @@ footer{
 .mode-list{display:block; width:100px; 50px; }
 
 .frag-area{ border: 2px solid #000; width:200px; height: 500px; }
+
+#divPlayField ul li {margin:1px;}
+
+#divPlayField { margin-bottom: 20px;}

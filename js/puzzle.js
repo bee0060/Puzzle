@@ -117,8 +117,6 @@ function showDifficultLevel()
 }
 
 function cutImg(){
-	//var radSelectedMode = $('#ulModeList li input[type=radio][name=mode]:checked');
-	//alert(radSelectedMode.length);
 	var	imgOrigin = puzzle.ctrls.imgOrigin[0],
 		imgWidth = imgOrigin.width,
 		imgHeight = imgOrigin.height,
@@ -161,9 +159,9 @@ function cutImg(){
 				'background-position':currentPosition,
 				'display':'block',
 				'float':'left',
-				'height':currentCellHeight+"px",
+				'height':(currentCellHeight-2)+"px",
 				'overflow':'hidden',
-				'width':currentCellWidth+"px"});
+				'width':(currentCellWidth-2)+"px"});
 			cells.push(li);
 		}		
 	}
@@ -185,12 +183,10 @@ function mixUpCells(cells)
 		pointInt,
 		pointCell,
 		outputCells =[];
-alert(cells[0].style.cssText);
+
 	while(seed>0){
 		pointInt = Math.round(Math.random()*seed-0.5);
 		pointCell = cells.splice(pointInt,1);
-		// TODO:2013-08-11 这里产生了bug，洗牌后插入outputCells数组的pointCell不是完整的所需的LI对象。
-			
 
 		outputCells.push(pointCell);
 		
@@ -201,10 +197,69 @@ alert(cells[0].style.cssText);
 
 function fillUl(ul, liArray)
 {
-	alert("!");
-	alert(liArray.nodeName);
 	for( var i =0;i<liArray.length;i++)
 	{
-		ul.appendChild(liArray[i]);
+		$(ul).append(liArray[i]);
 	}	
+}
+
+
+function clickFlag(flagObj)
+{
+	var flag = $(flagObj);
+	var otherHasSelectedFlag = flag.parent().find('[selected=selected]').not(flag);
+	
+	if(flag.attr('selected')=='selected')
+	{
+		cancelFlagSelectedStyle(flag);
+		return false;
+	}
+	if(flag.attr('selected')!='selected' && otherHasSelectedFlag.length == 0)
+	{
+		setFlagSelectedStyle(flag);
+		return false;
+	}
+	if(flag.attr('selected')!='selected' && otherHasSelectedFlag.length > 0)
+	{
+		change(flag,otherHasSelectedFlag);
+		cancelFlagSelectedStyle(otherHasSelectedFlag);
+		return false;
+	}
+}
+
+function setFlagSelectedStyle(flag)
+{
+	var flag = $(flag),
+		width = parseInt($(flag).css('width'))-2,
+		height = parseInt($(flag).css('height'))-2;
+	$(flag).attr('selected','selected')
+			.css({
+				'border':'solid 1px #000',
+				'width':width,
+				'height':height
+		});
+}
+
+function cancelFlagSelectedStyle(flag)
+{
+	var flag = $(flag),
+		width = parseInt($(flag).css('width'))+2,
+		height = parseInt($(flag).css('height'))+2;
+	$('#divPlayField li[selected=selected]')
+		.removeAttr('selected')
+		.css({
+			'border':'none',
+			'width':width,
+			'height':height
+	});
+}
+
+
+function change(flagA, flagB)
+{
+	var flagAHtml = $(flagA)[0].outerHTML;
+	var flagBHtml = $(flagB)[0].outerHTML;
+
+	flagA[0].outerHTML = flagBHtml;
+	flagB[0].outerHTML = flagAHtml;
 }

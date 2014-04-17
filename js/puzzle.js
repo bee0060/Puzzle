@@ -29,6 +29,7 @@ function selectImg()
     ctrls.imgOrigin.on('load', function ()
     {
         loadOriginImg(this);
+		cutImg();
     }); 
 
     ctrls.imgOrigin.attr('src', getImgUrl());
@@ -149,7 +150,8 @@ function cutImg(){
 		for(var x=0; x<hozCount; x++)
 		{			
 			li = document.createElement("li");
-						
+			li.x = x;
+			li.y = y;
 			currentCellWidth = (x==hozCount-1 ? lastCellWidth : cellWidth);
 			currentCellHeight = (y==verCount-1 ? lastCellHeight : cellHeight);
 			currentPosition = '-'+x*currentCellWidth+'px -'+y*currentCellHeight+'px'
@@ -230,10 +232,23 @@ function clickFlag(flagObj)
 function setFlagSelectedStyle(flag)
 {
 	var flag = $(flag),
-		width = parseInt($(flag).css('width'))-2,
-		height = parseInt($(flag).css('height'))-2;
+		x = flag[0].x,
+		y = flag[0].y,
+		originalPosition = flag.css('background-position'),
+		originalWidth = parseInt($(flag).css('width')),
+		originalHeight = parseInt($(flag).css('height')),
+		reg = /([^ ]+px)/g,
+		positions = originalPosition.match(reg);
+		originalPositionLeft = parseInt(positions[0]),
+		originalPositionTop = parseInt(positions[1]),
+		currentPosition = (originalPositionLeft-1)+'px '+(originalPositionTop-1)+'px',
+
+		width = originalWidth-2,
+		height = originalHeight-2;
+			
 	$(flag).attr('selected','selected')
 			.css({
+				'background-position':currentPosition,
 				'border':'solid 1px #000',
 				'width':width,
 				'height':height
@@ -243,11 +258,23 @@ function setFlagSelectedStyle(flag)
 function cancelFlagSelectedStyle(flag)
 {
 	var flag = $(flag),
-		width = parseInt($(flag).css('width'))+2,
-		height = parseInt($(flag).css('height'))+2;
+		x = flag.attr('x'),
+		y = flag.attr('y'),
+		originalPosition = flag.css('background-position'),
+		originalWidth = parseInt($(flag).css('width')),
+		originalHeight = parseInt($(flag).css('height')),
+		reg = /([^ ]+px)/g,
+		positions = originalPosition.match(reg);
+		originalPositionLeft = parseInt(positions[0]),
+		originalPositionTop = parseInt(positions[1]),
+		currentPosition = (originalPositionLeft+1)+'px '+(originalPositionTop+1)+'px',
+
+		width = originalWidth+2,
+		height = originalHeight+2;
 	$('#divPlayField li[selected=selected]')
 		.removeAttr('selected')
 		.css({
+			'background-position':currentPosition,
 			'border':'none',
 			'width':width,
 			'height':height

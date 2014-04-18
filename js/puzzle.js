@@ -150,8 +150,11 @@ function cutImg(){
 		for(var x=0; x<hozCount; x++)
 		{			
 			li = document.createElement("li");
-			li.x = x;
-			li.y = y;
+			$(li).attr({x:x,y:y,key:+x+y*verCount});
+			//li.x = x;
+			//li.y = y;
+			//li.key = +x+y*verCount;
+
 			currentCellWidth = (x==hozCount-1 ? lastCellWidth : cellWidth);
 			currentCellHeight = (y==verCount-1 ? lastCellHeight : cellHeight);
 			currentPosition = '-'+x*currentCellWidth+'px -'+y*currentCellHeight+'px'
@@ -174,6 +177,8 @@ function cutImg(){
 
 	playField.appendChild(ul);
 	$('.content').append(playField);
+	
+	bindFlagEvents();
 }
 
 /* 洗牌算法 */
@@ -225,6 +230,11 @@ function clickFlag(flagObj)
 	{
 		change(flag,otherHasSelectedFlag);
 		cancelFlagSelectedStyle(otherHasSelectedFlag);
+		if(checkPuzzleComplete())
+		{
+			alert('Puzzle Complete. Game Over.');
+			unbindFlagEvents();
+		}
 		return false;
 	}
 }
@@ -289,4 +299,37 @@ function change(flagA, flagB)
 
 	flagA[0].outerHTML = flagBHtml;
 	flagB[0].outerHTML = flagAHtml;
+}
+
+function checkPuzzleComplete()
+{
+	var prevKey = -1;
+	var complete = true;
+
+	$('#divPlayField ul li').each(function(i, li){
+		var me = $(li),
+			key = me.attr('key')
+		if(key!=+prevKey+1)
+		{
+			complete = false;
+			return false;
+		}
+		else
+		{
+			prevKey = key;
+		}
+	});
+	return complete;
+}
+
+function bindFlagEvents()
+{
+	$(document).on('click','#divPlayField li',function(){
+		clickFlag(this);
+	});
+}
+
+function unbindFlagEvents()
+{
+	$(document).off('click');
 }

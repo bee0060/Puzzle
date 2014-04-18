@@ -6,10 +6,8 @@ var puzzle = {};
 
 puzzle.ctrls ={
 	flImgSelector:$('#flImgSelector'),
-	btnSelectImg:$('#btnSelectImg'),
+	btnStartGame:$('#btnStartGame'),
 	imgOrigin:$('#imgOrigin'),
-	spnImgUrl:$('#spnImgUrl'),
-	spnImgSize:$('#flImgSelector'),
 	spnImgWidth:$('#spnImgWidth'),
 	spnImgHeight:$('#spnImgHeight')
 };
@@ -29,7 +27,6 @@ function selectImg()
     ctrls.imgOrigin.on('load', function ()
     {
         loadOriginImg(this);
-		cutImg();
     }); 
 
     ctrls.imgOrigin.attr('src', getImgUrl());
@@ -60,9 +57,6 @@ function loadOriginImg(imgObj)
     if (!!imgObj.complete)
     {
         var ctrls = puzzle.ctrls;
-
-        ctrls.spnImgUrl.html(decodeURI(imgObj.src));
-        ctrls.spnImgSize.html(imgObj.size);
         ctrls.spnImgWidth.html(imgObj.width);
         ctrls.spnImgHeight.html(imgObj.height);
 
@@ -87,34 +81,11 @@ function getImgUrl()
     return imgUrl;
 }
 
-function showDifficultLevel()
+function startGame()
 {
-	var modes = CUT_MODES,
-		ulModeList = $('#ulModeList'),
-		frag = document.createDocumentFragment(),
-		li,
-		rad,
-		lab;
-		 
-	for(var i =0;i<modes.length;i++)
-	{
-		li = document.createElement('li');
-		rad = document.createElement('input');
-		rad.type = 'radio';
-		rad.name = 'mode';
-		rad.VSplitCount = modes[i].VSplitCount;
-		rad.HSplitCount = modes[i].HSplitCount;
-		
-		lab = document.createElement('label');
-		lab.innerHTML = modes[i].Name;
-			
-		li.appendChild(rad);
-		li.appendChild(lab);	
-		
-		frag.appendChild(li);
-	}
-	
-	ulModeList.append(frag);
+	unbindFlagEvents();
+	cutImg();	
+	bindFlagEvents();
 }
 
 function cutImg(){
@@ -151,9 +122,6 @@ function cutImg(){
 		{			
 			li = document.createElement("li");
 			$(li).attr({x:x,y:y,key:+x+y*verCount});
-			//li.x = x;
-			//li.y = y;
-			//li.key = +x+y*verCount;
 
 			currentCellWidth = (x==hozCount-1 ? lastCellWidth : cellWidth);
 			currentCellHeight = (y==verCount-1 ? lastCellHeight : cellHeight);
@@ -177,8 +145,6 @@ function cutImg(){
 
 	playField.appendChild(ul);
 	$('.content').append(playField);
-	
-	bindFlagEvents();
 }
 
 /* 洗牌算法 */
@@ -331,5 +297,5 @@ function bindFlagEvents()
 
 function unbindFlagEvents()
 {
-	$(document).off('click');
+	$(document).off('click','#divPlayField li');
 }

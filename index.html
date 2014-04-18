@@ -16,64 +16,48 @@
 	</head>
 	<body>
 		<div>
-			<header>
+			 <div class='head'>
 				<h1>This is a puzlle game.</h1>
-			</header>
+			 </div>			 
 			<div class='content'>
 				<!-- 选图区 -->
-				<div class='select-img-area float left'>
-					<label>Image Path: </label>
+				<div class='select-img-area'>
 					<input id='flImgSelector' type='file' />
-					<input id='btnSelectImg' type='button' value="选择图片" />
-					<input id='btnCut' type='button' value="切割图片" />
+					<input id='btnStartGame' type='button' value="开始游戏" />
 				</div>
+				<ul class='img-info'>
+					<li>图片宽度:<span id='spnImgWidth'></span></li>
+					<li>图片高度:<span id='spnImgHeight'></span></li>
+				</ul>
 				<!-- 预览区，包括图片初始信息显示 -->
-				<div class='img-info float left'>
-					<img id='imgOrigin' alt=''>
-					<ul>
-						<li>图片路径:<span id='spnImgUrl'></span></li>
-						<li>图片尺寸:<span id='spnImgSize'></span></li>
-						<li>宽度:<span id='spnImgWidth'></span></li>
-						<li>高度:<span id='spnImgHeight'></span></li>
-					</ul>
-					<ul id='ulModeList' >
-					    
-					</ul>
-				</div>
-				<div class='float'>
-					<!-- 碎片区 -->
-					<div class='frag-area'></div>
-					<div></div>
-				</div>
+				<div>
+					<img id='imgOrigin' alt=''>										 
+				</div>				
 			</div>
-			<footer>
-				<!-- <p>
-					&copy; Copyright  by Steven Weng
-				</p>-->
-			</footer>
+			<!-- <div class='author'>
+			 	by Steven Weng				 
+			</div>-->
 		</div>
-		
-		
+				
          <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
          <script type="text/javascript" src="js/common.js"></script>
          <script type="text/javascript" src="js/puzzle.js"></script>
          <script type="text/javascript" src="js/config.js"></script>
          <script type="text/javascript">
          	$(document).ready(function(){
+				$(document).on('selectstart',function(){ return false; })
+
          		if(typeof puzzle !=='object'){
          			return false;
          		}
 
          		initialObjsByID('$');
-         		
-         		var btnSelectImg = $('#btnSelectImg');
-         		btnSelectImg.on('click',function(){
-         			selectImg();
-         		});
-         		
-         		var btnCut = $('#btnCut');
-         		btnCut.on('click',function(){
-         		    cutImg();         		    
+         		$('#flImgSelector').on('change',function(){
+					selectImg();
+				});
+         		var btnStartGame = $('#btnStartGame');
+         		btnStartGame.on('click',function(){
+         			startGame();
          		});
          	});
          	         	

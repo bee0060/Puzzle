@@ -231,6 +231,11 @@ function setFlagSelectedStyle(flag)
 		});
 }
 
+function getSelectedFlag()
+{
+	return $('#divPlayField ul li[selected=selected]');
+}
+
 function cancelFlagSelectedStyle(flag)
 {
 	var flag = $(flag),
@@ -263,8 +268,8 @@ function change(flagA, flagB)
 	var flagAHtml = $(flagA)[0].outerHTML;
 	var flagBHtml = $(flagB)[0].outerHTML;
 
-	flagA[0].outerHTML = flagBHtml;
-	flagB[0].outerHTML = flagAHtml;
+	$(flagA)[0].outerHTML = flagBHtml;
+	$(flagB)[0].outerHTML = flagAHtml;
 }
 
 function checkPuzzleComplete()
@@ -290,12 +295,22 @@ function checkPuzzleComplete()
 
 function bindFlagEvents()
 {
-	$(document).on('click','#divPlayField li',function(){
-		clickFlag(this);
+	$(document).on('mousedown','#divPlayField li',function(){
+		setFlagSelectedStyle(this);
+	}).on('mouseup','#divPlayField li',function(){
+		var selectedFlag = getSelectedFlag();		
+		cancelFlagSelectedStyle(selectedFlag);
+		change(this,selectedFlag);
+
+		if(checkPuzzleComplete())
+		{
+			alert('Puzzle Complete. Game Over.');
+			unbindFlagEvents();
+		}
 	});
 }
 
 function unbindFlagEvents()
 {
-	$(document).off('click','#divPlayField li');
+	$(document).off('mousedown','#divPlayField li').off('mouseup','#divPlayField li');
 }

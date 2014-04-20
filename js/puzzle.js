@@ -33,12 +33,6 @@ function selectImg()
     ctrls.imgOrigin.attr('alt', '');
 }
 
-function calValidCutModule(width, height)
-{
-	
-    return {x:10,y:10};	
-}
-
 function loadValidCutModule(moduleArr)
 {
 	var ulModuleList = $('#ulModuleList');

@@ -20,9 +20,7 @@ puzzle.modules = ["7*7","8*6","6*8"];
 
 function selectImg()
 {
-    var ctrls = puzzle.ctrls,
-		fileObj = ctrls.flImgSelector[0].files.item(0);
-
+    var ctrls = puzzle.ctrls;
 
     ctrls.imgOrigin.on('load', function ()
     {
@@ -136,17 +134,18 @@ function mixUpCells(cells)
 
 function fillUl(ul, liArray)
 {
-	for( var i =0;i<liArray.length;i++)
-	{
-		$(ul).append(liArray[i]);
-	}	
+	$(ul).append(liArray);
 }
 
 function setFlagSelected(flag)
 {
-	var flag = $(flag),		
-		sizeStyle = calculateUnSelectSizeStyleFromSelectedFlag(flag),
-		currentPosition = calculateUnSelectedBackgroundPositionStyleFromSelectedFlag(flag);
+	var flag = $(flag);
+	if(flag.length==0)
+	{
+		return false;
+	}
+	var sizeStyle = calculateFlagTargetSize(flag),
+		currentPosition = calculateFlagTargetBackgrounPosition(flag);
 
 	$(flag).attr('selected','selected')
 			.css({
@@ -157,32 +156,16 @@ function setFlagSelected(flag)
 		});
 }
 
-function calculateUnSelectSizeStyleFromSelectedFlag(flag)
-{
-	var flag = $(flag),
-		originalWidth = parseInt($(flag).css('width')),
-		originalHeight = parseInt($(flag).css('height')),
-		width = originalWidth-2,
-		height = originalHeight-2;
-
-	return {width: width, height:height};
-}
-
-function calculateUnSelectedBackgroundPositionStyleFromSelectedFlag(flag)
-{
-	var flag = $(flag),
-		originalPositionInfo = getFlagBackgroundPosition(flag),
-		originalPositionLeft = originalPositionInfo.left,
-		originalPositionTop = originalPositionInfo.top,
-		currentPosition = (originalPositionLeft-1)+'px '+(originalPositionTop-1)+'px';
-	return currentPosition;
-}
-
 function cancelFlagSelected(flag)
 {
-	var flag = $(flag),
-		sizeStyle = calculateSelectedSizeStyleFromUnSelectFlag(flag),
-		currentPosition = calculateSelectedBackgroundPositionStyleFromUnSelectedFlag(flag);
+	var flag = $(flag);
+
+	if(flag.length==0)
+	{
+		return false;
+	}
+	var sizeStyle = calculateFlagTargetSize(flag),
+		currentPosition = calculateFlagTargetBackgrounPosition(flag);
 
 	$('#divPlayField li[selected=selected]')
 		.removeAttr('selected')
@@ -194,24 +177,28 @@ function cancelFlagSelected(flag)
 	});
 }
 
-function calculateSelectedSizeStyleFromUnSelectFlag(flag)
+function calculateFlagTargetSize(flag)
 {
 	var flag = $(flag),
+		selected = flag.attr('selected'),
 		originalWidth = parseInt($(flag).css('width')),
 		originalHeight = parseInt($(flag).css('height')),
-		width = originalWidth+2,
-		height = originalHeight+2;
+		interval =  selected==='selected'? 2:-2,
+		width = +originalWidth+interval,
+		height =  +originalHeight+interval
 
 	return {width: width, height:height};
 }
 
-function calculateSelectedBackgroundPositionStyleFromUnSelectedFlag(flag)
+function calculateFlagTargetBackgrounPosition(flag)
 {
 	var flag = $(flag),
+		selected = flag.attr('selected'),
 		originalPositionInfo = getFlagBackgroundPosition(flag),
 		originalPositionLeft = originalPositionInfo.left,
 		originalPositionTop = originalPositionInfo.top,
-		currentPosition = (originalPositionLeft+1)+'px '+(originalPositionTop+1)+'px';
+		interval =  selected==='selected'? 1:-1,
+		currentPosition =  (originalPositionLeft+interval)+'px '+(originalPositionTop+interval)+'px';
 	return currentPosition;
 }
 
@@ -229,17 +216,25 @@ function getFlagBackgroundPosition(flag)
 
 function swap(flagA, flagB)
 {
-	var flagAHtml = $(flagA)[0].outerHTML;
-	var flagBHtml = $(flagB)[0].outerHTML;
+	var flagA = $(flagA)[0],
+		flagB = $(flagB)[0];
 
-	$(flagA)[0].outerHTML = flagBHtml;
-	$(flagB)[0].outerHTML = flagAHtml;
+	if(flagA == flagB)
+	{
+		return false;
+	}
+
+	var flagAHtml =  flagA.outerHTML,
+		flagBHtml =  flagB.outerHTML;
+
+	flagA.outerHTML = flagBHtml;
+	flagB.outerHTML = flagAHtml;
 }
 
 function checkPuzzleComplete()
 {
-	var prevKey = 0;
-	var complete = true;
+	var prevKey = 0,
+		complete = true;
 
 	$('#divPlayField ul li').each(function(i, li){
 		var me = $(li),
@@ -260,9 +255,23 @@ function checkPuzzleComplete()
 function bindFlagEvents()
 {
 	$(document).on('mousedown','#divPlayField li',function(){
-		setFlagSelected(this);
-	}).on('mouseup','#divPlayField li',function(){
 		var selectedFlag = getSelectedFlag();		
+		if(selectedFlag.length==0)
+		{		
+			setFlagSelected(this);
+		}
+		else
+		{
+			swap(this,selectedFlag);
+			cancelFlagSelected(selectedFlag);
+		}
+	}).on('mouseup','#divPlayField li',function(){
+		var selectedFlag = getSelectedFlag();	
+		if(selectedFlag[0] == this)
+		{
+			return false;
+		}
+
 		cancelFlagSelected(selectedFlag);
 		swap(this,selectedFlag);
 

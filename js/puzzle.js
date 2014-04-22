@@ -134,10 +134,7 @@ function mixUpCells(cells)
 
 function fillUl(ul, liArray)
 {
-	for( var i =0;i<liArray.length;i++)
-	{
-		$(ul).append(liArray[i]);
-	}	
+	$(ul).append(liArray);
 }
 
 function setFlagSelected(flag)
@@ -157,27 +154,6 @@ function setFlagSelected(flag)
 				'width': sizeStyle.width,
 				'height': sizeStyle.height
 		});
-}
-
-function calculateUnSelectSizeStyleFromSelectedFlag(flag)
-{
-	var flag = $(flag),
-		originalWidth = parseInt($(flag).css('width')),
-		originalHeight = parseInt($(flag).css('height')),
-		width = originalWidth-2,
-		height = originalHeight-2;
-
-	return {width: width, height:height};
-}
-
-function calculateUnSelectedBackgroundPositionStyleFromSelectedFlag(flag)
-{
-	var flag = $(flag),
-		originalPositionInfo = getFlagBackgroundPosition(flag),
-		originalPositionLeft = originalPositionInfo.left,
-		originalPositionTop = originalPositionInfo.top,
-		currentPosition = (originalPositionLeft-1)+'px '+(originalPositionTop-1)+'px';
-	return currentPosition;
 }
 
 function cancelFlagSelected(flag)
@@ -201,24 +177,28 @@ function cancelFlagSelected(flag)
 	});
 }
 
-function calculateSelectedSizeStyleFromUnSelectFlag(flag)
+function calculateFlagTargetSize(flag)
 {
 	var flag = $(flag),
+		selected = flag.attr('selected'),
 		originalWidth = parseInt($(flag).css('width')),
 		originalHeight = parseInt($(flag).css('height')),
-		width = originalWidth+2,
-		height = originalHeight+2;
+		interval =  selected==='selected'? 2:-2,
+		width = +originalWidth+interval,
+		height =  +originalHeight+interval
 
 	return {width: width, height:height};
 }
 
-function calculateSelectedBackgroundPositionStyleFromUnSelectedFlag(flag)
+function calculateFlagTargetBackgrounPosition(flag)
 {
 	var flag = $(flag),
+		selected = flag.attr('selected'),
 		originalPositionInfo = getFlagBackgroundPosition(flag),
 		originalPositionLeft = originalPositionInfo.left,
 		originalPositionTop = originalPositionInfo.top,
-		currentPosition = (originalPositionLeft+1)+'px '+(originalPositionTop+1)+'px';
+		interval =  selected==='selected'? 1:-1,
+		currentPosition =  (originalPositionLeft+interval)+'px '+(originalPositionTop+interval)+'px';
 	return currentPosition;
 }
 
@@ -278,8 +258,8 @@ function swap(flagA, flagB)
 
 function checkPuzzleComplete()
 {
-	var prevKey = 0;
-	var complete = true;
+	var prevKey = 0,
+		complete = true;
 
 	$('#divPlayField ul li').each(function(i, li){
 		var me = $(li),

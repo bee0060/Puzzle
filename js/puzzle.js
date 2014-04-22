@@ -33,19 +33,6 @@ function selectImg()
     ctrls.imgOrigin.attr('alt', '');
 }
 
-function loadValidCutModule(moduleArr)
-{
-	var ulModuleList = $('#ulModuleList');
-	if(isArray(moduleArr)&&moduleArr.length>0)
-	{
-		for(var i =0;i<moduleArr.length;i++)
-		{
-			
-		}	
-	}
-	
-}
-
 function loadOriginImg(imgObj)
 {
     if (!!imgObj.complete)
@@ -144,22 +131,7 @@ function cutImg(){
 /* 洗牌算法 */
 function mixUpCells(cells)
 {
-	var cellCount = cells.length,
-		seed = cellCount,
-		randomNum,
-		pointInt,
-		pointCell,
-		outputCells =[];
-
-	while(seed>0){
-		pointInt = Math.round(Math.random()*seed-0.5);
-		pointCell = cells.splice(pointInt,1);
-
-		outputCells.push(pointCell);
-		
-		seed--;
-	} 
-	return outputCells;
+	return cells.sort(function(){ return Math.random()-0.5});
 }
 
 function fillUl(ul, liArray)
@@ -170,94 +142,92 @@ function fillUl(ul, liArray)
 	}	
 }
 
-
-function clickFlag(flagObj)
+function setFlagSelected(flag)
 {
-	var flag = $(flagObj);
-	var otherHasSelectedFlag = flag.parent().find('[selected=selected]').not(flag);
-	
-	if(flag.attr('selected')=='selected')
-	{
-		cancelFlagSelectedStyle(flag);
-		return false;
-	}
-	if(flag.attr('selected')!='selected' && otherHasSelectedFlag.length == 0)
-	{
-		setFlagSelectedStyle(flag);
-		return false;
-	}
-	if(flag.attr('selected')!='selected' && otherHasSelectedFlag.length > 0)
-	{
-		change(flag,otherHasSelectedFlag);
-		cancelFlagSelectedStyle(otherHasSelectedFlag);
-		if(checkPuzzleComplete())
-		{
-			alert('Puzzle Complete. Game Over.');
-			unbindFlagEvents();
-		}
-		return false;
-	}
-}
+	var flag = $(flag),		
+		sizeStyle = calculateUnSelectSizeStyleFromSelectedFlag(flag),
+		currentPosition = calculateUnSelectedBackgroundPositionStyleFromSelectedFlag(flag);
 
-function setFlagSelectedStyle(flag)
-{
-	var flag = $(flag),
-		x = flag[0].x,
-		y = flag[0].y,
-		originalPosition = flag.css('background-position'),
-		originalWidth = parseInt($(flag).css('width')),
-		originalHeight = parseInt($(flag).css('height')),
-		reg = /([^ ]+px)/g,
-		positions = originalPosition.match(reg);
-		originalPositionLeft = parseInt(positions[0]),
-		originalPositionTop = parseInt(positions[1]),
-		currentPosition = (originalPositionLeft-1)+'px '+(originalPositionTop-1)+'px',
-
-		width = originalWidth-2,
-		height = originalHeight-2;
-			
 	$(flag).attr('selected','selected')
 			.css({
 				'background-position':currentPosition,
 				'border':'solid 1px #000',
-				'width':width,
-				'height':height
+				'width': sizeStyle.width,
+				'height': sizeStyle.height
 		});
 }
 
-function getSelectedFlag()
-{
-	return $('#divPlayField ul li[selected=selected]');
-}
-
-function cancelFlagSelectedStyle(flag)
+function calculateUnSelectSizeStyleFromSelectedFlag(flag)
 {
 	var flag = $(flag),
-		x = flag.attr('x'),
-		y = flag.attr('y'),
-		originalPosition = flag.css('background-position'),
 		originalWidth = parseInt($(flag).css('width')),
 		originalHeight = parseInt($(flag).css('height')),
-		reg = /([^ ]+px)/g,
-		positions = originalPosition.match(reg);
-		originalPositionLeft = parseInt(positions[0]),
-		originalPositionTop = parseInt(positions[1]),
-		currentPosition = (originalPositionLeft+1)+'px '+(originalPositionTop+1)+'px',
+		width = originalWidth-2,
+		height = originalHeight-2;
 
-		width = originalWidth+2,
-		height = originalHeight+2;
+	return {width: width, height:height};
+}
+
+function calculateUnSelectedBackgroundPositionStyleFromSelectedFlag(flag)
+{
+	var flag = $(flag),
+		originalPositionInfo = getFlagBackgroundPosition(flag),
+		originalPositionLeft = originalPositionInfo.left,
+		originalPositionTop = originalPositionInfo.top,
+		currentPosition = (originalPositionLeft-1)+'px '+(originalPositionTop-1)+'px';
+	return currentPosition;
+}
+
+function cancelFlagSelected(flag)
+{
+	var flag = $(flag),
+		sizeStyle = calculateSelectedSizeStyleFromUnSelectFlag(flag),
+		currentPosition = calculateSelectedBackgroundPositionStyleFromUnSelectedFlag(flag);
+
 	$('#divPlayField li[selected=selected]')
 		.removeAttr('selected')
 		.css({
 			'background-position':currentPosition,
 			'border':'none',
-			'width':width,
-			'height':height
+			'width':sizeStyle.width,
+			'height':sizeStyle.height
 	});
 }
 
+function calculateSelectedSizeStyleFromUnSelectFlag(flag)
+{
+	var flag = $(flag),
+		originalWidth = parseInt($(flag).css('width')),
+		originalHeight = parseInt($(flag).css('height')),
+		width = originalWidth+2,
+		height = originalHeight+2;
 
-function change(flagA, flagB)
+	return {width: width, height:height};
+}
+
+function calculateSelectedBackgroundPositionStyleFromUnSelectedFlag(flag)
+{
+	var flag = $(flag),
+		originalPositionInfo = getFlagBackgroundPosition(flag),
+		originalPositionLeft = originalPositionInfo.left,
+		originalPositionTop = originalPositionInfo.top,
+		currentPosition = (originalPositionLeft+1)+'px '+(originalPositionTop+1)+'px';
+	return currentPosition;
+}
+
+function getFlagBackgroundPosition(flag)
+{
+	var flag = $(flag),
+		position = flag.css('background-position'),		
+		reg = /([^ ]+px)/g,
+		positions = position.match(reg);
+		positionLeft = parseInt(positions[0]),
+		positionTop = parseInt(positions[1]),
+		positionInfo = { left: positionLeft, top: positionTop};
+	return positionInfo;
+}
+
+function swap(flagA, flagB)
 {
 	var flagAHtml = $(flagA)[0].outerHTML;
 	var flagBHtml = $(flagB)[0].outerHTML;
@@ -268,13 +238,13 @@ function change(flagA, flagB)
 
 function checkPuzzleComplete()
 {
-	var prevKey = -1;
+	var prevKey = 0;
 	var complete = true;
 
 	$('#divPlayField ul li').each(function(i, li){
 		var me = $(li),
 			key = me.attr('key')
-		if(key!=+prevKey+1)
+		if(key != prevKey)
 		{
 			complete = false;
 			return false;
@@ -290,11 +260,11 @@ function checkPuzzleComplete()
 function bindFlagEvents()
 {
 	$(document).on('mousedown','#divPlayField li',function(){
-		setFlagSelectedStyle(this);
+		setFlagSelected(this);
 	}).on('mouseup','#divPlayField li',function(){
 		var selectedFlag = getSelectedFlag();		
-		cancelFlagSelectedStyle(selectedFlag);
-		change(this,selectedFlag);
+		cancelFlagSelected(selectedFlag);
+		swap(this,selectedFlag);
 
 		if(checkPuzzleComplete())
 		{
@@ -302,6 +272,11 @@ function bindFlagEvents()
 			unbindFlagEvents();
 		}
 	});
+}
+
+function getSelectedFlag()
+{
+	return $('#divPlayField ul li[selected=selected]');
 }
 
 function unbindFlagEvents()

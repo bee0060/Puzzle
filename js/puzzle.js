@@ -47,9 +47,9 @@ function getImgUrl()
 {
     var ctrls = puzzle.ctrls,
         flImgSelector = ctrls.flImgSelector[0],
-			imgUrl;
+		imgUrl;
     
-    if (window.getSelection) // is firefox
+    if (flImgSelector.files && flImgSelector.files.length) // is firefox
     {
         imgUrl = window.URL.createObjectURL(flImgSelector.files[0]);
     }

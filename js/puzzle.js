@@ -46,7 +46,8 @@ function getImgUrl()
     }
     else
     {
-        imgUrl = flImgSelector.value;
+		flImgSelector.select();
+        imgUrl = document.selection.createRange().text;
     }
     return imgUrl;
 }
@@ -222,7 +223,7 @@ function swap(flagA, flagB)
 	var flagA = $(flagA)[0],
 		flagB = $(flagB)[0];
 
-	if(flagA == flagB)
+	if(!flagA || !flagB || flagA == flagB)
 	{
 		return false;
 	}

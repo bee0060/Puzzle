@@ -6,17 +6,10 @@ var puzzle = {};
 
 puzzle.ctrls ={
 	flImgSelector:$('#flImgSelector'),
-	btnStartGame:$('#btnStartGame'),
 	imgOrigin:$('#imgOrigin'),
 	spnImgWidth:$('#spnImgWidth'),
 	spnImgHeight:$('#spnImgHeight')
 };
-
-puzzle.variables = {
-    imgSrc: ""
-};
-
-puzzle.modules = ["7*7","8*6","6*8"];
 
 function selectImg()
 {
@@ -38,8 +31,6 @@ function loadOriginImg(imgObj)
         var ctrls = puzzle.ctrls;
         ctrls.spnImgWidth.html(imgObj.width);
         ctrls.spnImgHeight.html(imgObj.height);
-
-        puzzle.variables.src= imgObj.src;
     }
 }
 
@@ -67,11 +58,33 @@ function startGame()
 	bindFlagEvents();
 }
 
-function cutImg(){
+function cutImg(){	
 	var	imgOrigin = puzzle.ctrls.imgOrigin[0],
 		imgWidth = imgOrigin.width,
 		imgHeight = imgOrigin.height,
-		hozCount = 4, verCount = 4, 
+		playField = getPlayField(imgWidth,imgHeight),
+		originalCells = createFlags(puzzle.ctrls.imgOrigin[0],4,4),	
+		mixedCells = mixUpCells(originalCells),
+		ul = document.createElement("ul"); 
+	fillUl(ul, mixedCells);
+	playField.appendChild(ul);
+	$('.content').append(playField);
+}
+
+function getPlayField( width, height )
+{
+	$('#divPlayField').remove();
+	var playField = document.createElement("div");
+	playField.id="divPlayField";
+	playField.style.cssText = "border:1px solid #000;height:"+height+"px;width:"+width+"px;";
+	return playField;
+}
+
+function createFlags(img,hozCount,verCount)
+{
+	var	imgOrigin = img,
+		imgWidth = imgOrigin.width,
+		imgHeight = imgOrigin.height,
 		cellWidth = parseInt(imgWidth/hozCount),
 		lastCellWidth = imgWidth- cellWidth*hozCount;
 		cellHeight = parseInt(imgHeight/verCount),
@@ -83,18 +96,11 @@ function cutImg(){
 	lastCellWidth = cellWidth;
 	lastCellHeight = cellHeight;
 	
-	$('#divPlayField').remove();
-	var playField = document.createElement("div");
-	playField.id="divPlayField";
-	playField.style.cssText = "border:1px solid #000;height:"+imgHeight+"px;width:"+imgWidth+"px;";
-	
 	var cells = [],
-		mixedCells,
-		ul = document.createElement("ul"),
 		li,
 		currentCellWidth, currentCellHeight,
 		currentPosition;
-		
+
 	for(var y=0; y<verCount; y++)
 	{
 		for(var x=0; x<hozCount; x++)
@@ -117,13 +123,12 @@ function cutImg(){
 			cells.push(li);
 		}		
 	}
-	
-	mixedCells = mixUpCells(cells);
- 
-	fillUl(ul, mixedCells);
+	return cells;
+}
 
-	playField.appendChild(ul);
-	$('.content').append(playField);
+function createNewFlag(x,y,key,width,height,backgroundSrc)
+{
+	//TODO 看能否把创建单个flag的逻辑抽离出来
 }
 
 /* 洗牌算法 */
@@ -159,7 +164,6 @@ function setFlagSelected(flag)
 function cancelFlagSelected(flag)
 {
 	var flag = $(flag);
-
 	if(flag.length==0)
 	{
 		return false;
@@ -186,32 +190,6 @@ function calculateFlagTargetSize(flag)
 		interval =  selected==='selected'? 2:-2,
 		width = +originalWidth+interval,
 		height =  +originalHeight+interval
-
-	return {width: width, height:height};
-}
-
-function calculateFlagTargetBackgrounPosition(flag)
-{
-	var flag = $(flag),
-		selected = flag.attr('selected'),
-		originalPositionInfo = getFlagBackgroundPosition(flag),
-		originalPositionLeft = originalPositionInfo.left,
-		originalPositionTop = originalPositionInfo.top,
-		interval =  selected==='selected'? 1:-1,
-		currentPosition =  (originalPositionLeft+interval)+'px '+(originalPositionTop+interval)+'px';
-	return currentPosition;
-}
-
-function calculateFlagTargetSize(flag)
-{
-	var flag = $(flag),
-		selected = flag.attr('selected'),
-		originalWidth = parseInt($(flag).css('width')),
-		originalHeight = parseInt($(flag).css('height')),
-		interval =  selected==='selected'? 2:-2,
-		width = +originalWidth+interval,
-		height =  +originalHeight+interval
-
 	return {width: width, height:height};
 }
 
@@ -256,27 +234,6 @@ function swap(flagA, flagB)
 	flagB.outerHTML = flagAHtml;
 }
 
-function checkPuzzleComplete()
-{
-	var prevKey = 0,
-		complete = true;
-
-	$('#divPlayField ul li').each(function(i, li){
-		var me = $(li),
-			key = me.attr('key')
-		if(key != prevKey)
-		{
-			complete = false;
-			return false;
-		}
-		else
-		{
-			prevKey = key;
-		}
-	});
-	return complete;
-}
-
 function bindFlagEvents()
 {
 	$(document).on('mousedown','#divPlayField li',function(){
@@ -302,10 +259,37 @@ function bindFlagEvents()
 
 		if(checkPuzzleComplete())
 		{
-			alert('Puzzle Complete. Game Over.');
-			unbindFlagEvents();
+			gameOver();
 		}
 	});
+}
+
+function checkPuzzleComplete()
+{
+	var prevKey = 0,
+		complete = true;
+
+	$('#divPlayField ul li').each(function(i, li){
+		var me = $(li),
+			key = me.attr('key')
+			 
+		if(key != prevKey)
+		{	
+			complete = false;
+			return false;
+		}
+		else
+		{
+			prevKey = +key+1;
+		}
+	});
+	return complete;
+}
+
+function gameOver()
+{
+	alert('Puzzle Complete. Game Over.');
+	unbindFlagEvents();
 }
 
 function getSelectedFlag()

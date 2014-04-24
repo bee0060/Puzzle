@@ -5,6 +5,9 @@ Puzzle Game
 
 http://bee0060.github.io/Puzzle/index.html
  
+
+（为了方便演示和修改，废弃master分支，最新代码都在gh-pages分支中）
+
 TODO List:
 
 1. 使操作精简，去掉多余按钮和页面信息

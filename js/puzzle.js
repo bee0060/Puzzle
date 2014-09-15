@@ -2,6 +2,11 @@
  * @author Stevn Weng
  * Created on 2012-12-14
  */
+
+
+/* 避免拖动效果失效， 禁用select事件 */
+$(document).on('selectstart',function(){ return false; })
+
 var puzzle = {};
 
 puzzle.ctrls ={
@@ -106,21 +111,11 @@ function createFlags(img,hozCount,verCount)
 	{
 		for(var x=0; x<hozCount; x++)
 		{			
-			li = document.createElement("li");
-			$(li).attr({x:x,y:y,key:+x+y*verCount});
-
+			key = +x+y*verCount;
 			currentCellWidth = (x==hozCount-1 ? lastCellWidth : cellWidth);
 			currentCellHeight = (y==verCount-1 ? lastCellHeight : cellHeight);
-			currentPosition = '-'+x*currentCellWidth+'px -'+y*currentCellHeight+'px'
-			
-			$(li).css({
-				'background-image':"url("+imgOrigin.src+")",
-				'background-position':currentPosition,
-				'display':'block',
-				'float':'left',
-				'height':(currentCellHeight-2)+"px",
-				'overflow':'hidden',
-				'width':(currentCellWidth-2)+"px"});
+
+			var li = createNewFlag(x, y, key, currentCellWidth, currentCellHeight, imgOrigin.src);
 			cells.push(li);
 		}		
 	}
@@ -129,7 +124,19 @@ function createFlags(img,hozCount,verCount)
 
 function createNewFlag(x,y,key,width,height,backgroundSrc)
 {
-	//TODO 看能否把创建单个flag的逻辑抽离出来
+	position = '-'+x*width+'px -'+ y*height+'px';
+	var li = document.createElement("li");
+	$(li).attr({x:x,y:y,key:key})
+				.css({
+					'background-image':"url("+ backgroundSrc +")",
+					'background-position':position,
+					'display':'block',
+					'float':'left',
+					'height':(height-2)+"px",
+					'overflow':'hidden',
+					'width':(width-2)+"px"
+				});
+	return li;
 }
 
 /* 洗牌算法 */
@@ -265,6 +272,11 @@ function bindFlagEvents()
 	});
 }
 
+function getSelectedFlag()
+{
+	return $('#divPlayField ul li[selected=selected]');
+}
+
 function checkPuzzleComplete()
 {
 	var prevKey = 0,
@@ -293,10 +305,6 @@ function gameOver()
 	unbindFlagEvents();
 }
 
-function getSelectedFlag()
-{
-	return $('#divPlayField ul li[selected=selected]');
-}
 
 function unbindFlagEvents()
 {

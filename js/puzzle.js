@@ -9,6 +9,7 @@ $(document).on('selectstart',function(){ return false; })
 
 var puzzle = {};
 
+// 页面控件缓存
 puzzle.ctrls ={
 	flImgSelector:$('#flImgSelector'),
 	imgOrigin:$('#imgOrigin'),
@@ -16,6 +17,7 @@ puzzle.ctrls ={
 	spnImgHeight:$('#spnImgHeight')
 };
 
+// 选择图片
 function selectImg()
 {
     var ctrls = puzzle.ctrls;
@@ -29,6 +31,7 @@ function selectImg()
     ctrls.imgOrigin.attr('alt', '');
 }
 
+// 加载原图
 function loadOriginImg(imgObj)
 {
     if (!!imgObj.complete)
@@ -39,6 +42,7 @@ function loadOriginImg(imgObj)
     }
 }
 
+// 获取图片路径
 function getImgUrl()
 {
     var ctrls = puzzle.ctrls,
@@ -57,18 +61,21 @@ function getImgUrl()
     return imgUrl;
 }
 
+// 开始游戏
 function startGame()
 {
 	unbindFlagEvents();
 	cutImg();	
 	bindFlagEvents();
+	puzzle.ctrls.imgOrigin.hide();
 }
 
+// 切割图片并加载到游戏区
 function cutImg(){	
 	var	imgOrigin = puzzle.ctrls.imgOrigin[0],
 		imgWidth = imgOrigin.width,
 		imgHeight = imgOrigin.height,
-		playField = getPlayField(imgWidth,imgHeight),
+		playField = buildPlayField(imgWidth,imgHeight),
 		originalCells = createFlags(puzzle.ctrls.imgOrigin[0],4,4),	
 		mixedCells = mixUpCells(originalCells),
 		ul = document.createElement("ul"); 
@@ -77,7 +84,8 @@ function cutImg(){
 	$('.content').append(playField);
 }
 
-function getPlayField( width, height )
+// 创建游戏区
+function buildPlayField( width, height )
 {
 	$('#divPlayField').remove();
 	var playField = document.createElement("div");
@@ -86,6 +94,7 @@ function getPlayField( width, height )
 	return playField;
 }
 
+// 切割原图并创建拼图块
 function createFlags(img,hozCount,verCount)
 {
 	var	imgOrigin = img,
@@ -122,6 +131,7 @@ function createFlags(img,hozCount,verCount)
 	return cells;
 }
 
+// 创建新的拼图块
 function createNewFlag(x,y,key,width,height,backgroundSrc)
 {
 	position = '-'+x*width+'px -'+ y*height+'px';
@@ -145,11 +155,13 @@ function mixUpCells(cells)
 	return cells.sort(function(){ return Math.random()-0.5});
 }
 
+// 用li数组填充UL对象
 function fillUl(ul, liArray)
 {
 	$(ul).append(liArray);
 }
 
+// 设置拼图块选中状态
 function setFlagSelected(flag)
 {
 	var flag = $(flag);
@@ -169,6 +181,7 @@ function setFlagSelected(flag)
 		});
 }
 
+// 取消拼图块选中状态
 function cancelFlagSelected(flag)
 {
 	var flag = $(flag);
@@ -189,6 +202,7 @@ function cancelFlagSelected(flag)
 	});
 }
 
+// 计算拼图块目标尺寸
 function calculateFlagTargetSize(flag)
 {
 	var flag = $(flag),
@@ -201,6 +215,7 @@ function calculateFlagTargetSize(flag)
 	return {width: width, height:height};
 }
 
+// 计算拼图块目标背景坐标
 function calculateFlagTargetBackgrounPosition(flag)
 {
 	var flag = $(flag),
@@ -213,6 +228,7 @@ function calculateFlagTargetBackgrounPosition(flag)
 	return currentPosition;
 }
 
+// 获取拼图块背景坐标
 function getFlagBackgroundPosition(flag)
 {
 	var flag = $(flag),
@@ -225,6 +241,7 @@ function getFlagBackgroundPosition(flag)
 	return positionInfo;
 }
 
+// 调换拼图块位置
 function swap(flagA, flagB)
 {
 	var flagA = $(flagA)[0],
@@ -242,6 +259,7 @@ function swap(flagA, flagB)
 	flagB.outerHTML = flagAHtml;
 }
 
+// 绑定拼图块事件
 function bindFlagEvents()
 {
 	$(document).on('mousedown','#divPlayField li',function(){
@@ -272,11 +290,13 @@ function bindFlagEvents()
 	});
 }
 
+// 获取被选中的拼图块
 function getSelectedFlag()
 {
 	return $('#divPlayField ul li[selected=selected]');
 }
 
+// 判断拼图是否完成
 function checkPuzzleComplete()
 {
 	var prevKey = 0,
@@ -299,13 +319,14 @@ function checkPuzzleComplete()
 	return complete;
 }
 
+// 游戏结束，取消事件绑定
 function gameOver()
 {
 	alert('Puzzle Complete. Game Over.');
 	unbindFlagEvents();
 }
 
-
+//　取消事件绑定
 function unbindFlagEvents()
 {
 	$(document).off('mousedown','#divPlayField li').off('mouseup','#divPlayField li');

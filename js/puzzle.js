@@ -101,30 +101,17 @@ function createFlags(img,hozCount,verCount)
 		imgWidth = imgOrigin.width,
 		imgHeight = imgOrigin.height,
 		cellWidth = parseInt(imgWidth/hozCount),
-		lastCellWidth = imgWidth- cellWidth*hozCount;
-		cellHeight = parseInt(imgHeight/verCount),
-		lastCellHeight = imgHeight-cellHeight*verCount;
-	 
-	hozCount += (lastCellWidth > 0 ? 1 : 0);
-	verCount += (lastCellHeight > 0 ? 1 : 0);
-	
-	lastCellWidth = cellWidth;
-	lastCellHeight = cellHeight;
-	
+		cellHeight = parseInt(imgHeight/verCount);
+
 	var cells = [],
-		li,
-		currentCellWidth, currentCellHeight,
-		currentPosition;
+		li;
 
 	for(var y=0; y<verCount; y++)
 	{
 		for(var x=0; x<hozCount; x++)
 		{			
 			key = +x+y*verCount;
-			currentCellWidth = (x==hozCount-1 ? lastCellWidth : cellWidth);
-			currentCellHeight = (y==verCount-1 ? lastCellHeight : cellHeight);
-
-			var li = createNewFlag(x, y, key, currentCellWidth, currentCellHeight, imgOrigin.src);
+			var li = createNewFlag(x, y, key, cellWidth, cellHeight, imgOrigin.src);
 			cells.push(li);
 		}		
 	}
@@ -136,15 +123,16 @@ function createNewFlag(x,y,key,width,height,backgroundSrc)
 {
 	position = '-'+x*width+'px -'+ y*height+'px';
 	var li = document.createElement("li");
+	const marginSpace = 2;
 	$(li).attr({x:x,y:y,key:key})
 				.css({
 					'background-image':"url("+ backgroundSrc +")",
 					'background-position':position,
 					'display':'block',
 					'float':'left',
-					'height':(height-2)+"px",
+					'height':(height - marginSpace)+"px",
 					'overflow':'hidden',
-					'width':(width-2)+"px"
+					'width':(width - marginSpace)+"px"
 				});
 	return li;
 }
@@ -152,6 +140,7 @@ function createNewFlag(x,y,key,width,height,backgroundSrc)
 /* 洗牌算法 */
 function mixUpCells(cells)
 {
+	console.log('cells:', cells)
 	return cells.sort(function(){ return Math.random()-0.5});
 }
 
